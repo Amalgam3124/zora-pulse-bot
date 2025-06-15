@@ -1,0 +1,8 @@
+venv/
+zora-sdk/node_modules/
+node_modules/
+.env
+__pycache__/
+.vscode/
+.DS_Store
+Thumbs.db
