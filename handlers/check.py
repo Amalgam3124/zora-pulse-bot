@@ -35,7 +35,6 @@ async def check_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await update.message.reply_text(text, parse_mode="HTML")
-    ***REMOVED***
     if address and address.startswith("0x") and len(address) == 42:
         keyboard = [
             [

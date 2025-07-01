@@ -6,13 +6,11 @@ from utils.ai import ask_gpt
 
 async def summary_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args
-    ***REMOVED***
     async def reply(text):
         if update.message:
             return await update.message.reply_text(text)
         elif getattr(update, 'callback_query', None) and update.callback_query.message:
             return await update.callback_query.message.reply_text(text)
-    ***REMOVED***
     wait_message = await reply("🤖 AI is analyzing, please wait...")
     if not args or not args[0].isdigit():
         if wait_message:

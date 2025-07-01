@@ -125,7 +125,6 @@ async def confirm_delete_handler(update: Update, context: ContextTypes.DEFAULT_T
 async def buy_handler(update: Update, context: ContextTypes.DEFAULT_TYPE, address=None):
     reply = get_reply_func(update)
     print(f"[DEBUG] update.message.text: {getattr(update, 'message', None) and update.message.text}")
-    ***REMOVED***
     if address is None:
         args = context.args
         if not args:
