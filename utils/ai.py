@@ -10,10 +10,10 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_API_BASE = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
 
 MODELS = [
-    "deepseek/deepseek-chat-v3-0324:free",
-    "deepseek/deepseek-r1-0528:free"
+    "deepseek/deepseek-r1-0528:free",
     "google/gemini-2.0-flash-exp:free",
-]
+    "anthropic/claude-3.5-sonnet:free",
+    ]
 
 if not OPENROUTER_API_KEY:
     raise RuntimeError("❌ OPENROUTER_API_KEY not found in environment variables")
@@ -24,7 +24,7 @@ HEADERS = {
 }
 
 def ask_gpt(prompt: str) -> str:
-    url = f"{OPENROUTER_API_BASE}/chat/completions"
+    url = "https://openrouter.ai/api/v1/chat/completions"
     system_msg = {"role": "system", "content": "You are a crypto market analyst writing concise daily summaries."}
     user_msg = {"role": "user", "content": prompt}
 

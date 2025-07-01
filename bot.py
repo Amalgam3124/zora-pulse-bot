@@ -6,7 +6,7 @@ from handlers.daily import daily_handler
 from handlers.summary import summary_handler
 from handlers.check import check_handler
 from handlers.analysis import analysis_handler
-from handlers.wallet import creat_handler, import_handler, info_handler, wallet_conversation_handler
+from handlers.wallet import creat_handler, import_handler, info_handler, wallet_conversation_handler, buy_conversation_handler
 
 
 load_dotenv()
@@ -40,8 +40,10 @@ app.add_handler(CommandHandler("creat", creat_handler))
 app.add_handler(CommandHandler("import", import_handler))
 app.add_handler(CommandHandler("info", info_handler))
 app.add_handler(wallet_conversation_handler)
+app.add_handler(buy_conversation_handler)
 
 
 
 if __name__ == '__main__':
+    print("bot started")
     app.run_polling()
