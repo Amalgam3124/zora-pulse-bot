@@ -16,7 +16,7 @@ AWAITING_DELETE_CONFIRM = range(1)
 
 BUY_AWAIT_AMOUNT, BUY_AWAIT_CONFIRM = range(2)
 
-***REMOVED***
+#***REMOVED***
 user_buy_context = {}
 
 def delete_wallet(telegram_user_id: int):
