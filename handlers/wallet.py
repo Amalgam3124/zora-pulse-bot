@@ -27,6 +27,14 @@ def delete_wallet(telegram_user_id: int):
     conn.commit()
     conn.close()
 
+def get_reply_func(update):
+    async def reply(text, **kwargs):
+        if getattr(update, 'message', None):
+            return await update.message.reply_text(text, **kwargs)
+        elif getattr(update, 'callback_query', None) and update.callback_query.message:
+            return await update.callback_query.message.reply_text(text, **kwargs)
+    return reply
+
 async def creat_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     from eth_account import Account
     acct = Account.create()
@@ -114,27 +122,41 @@ async def confirm_delete_handler(update: Update, context: ContextTypes.DEFAULT_T
         await update.message.reply_text("Wallet deletion cancelled. If you want to delete, please type /delete again.")
     return ConversationHandler.END
 
-async def buy_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not context.args or len(context.args[0]) != 42 or not context.args[0].startswith('0x'):
-        await update.message.reply_text("Usage: /buy <Zora Coin contract address>")
+async def buy_handler(update: Update, context: ContextTypes.DEFAULT_TYPE, address=None):
+    reply = get_reply_func(update)
+    print(f"[DEBUG] update.message.text: {getattr(update, 'message', None) and update.message.text}")
+    ***REMOVED***
+    if address is None:
+        args = context.args
+        if not args:
+            if getattr(update, 'message', None) and update.message.text:
+                parts = update.message.text.strip().split()
+                if len(parts) > 1:
+                    args = [parts[1]]
+        if args:
+            address = args[0]
+    print(f"[DEBUG] buy_handler address: {address}")
+    if not address or len(address) != 42 or not address.startswith('0x'):
+        await reply("Usage: /buy <Zora Coin contract address>")
         return BUY_AWAIT_AMOUNT
-    coin_address = context.args[0]
+    coin_address = address
     user_id = update.effective_user.id
     user_buy_context[user_id] = {'coin_address': coin_address}
-    await update.message.reply_text("Please enter the amount of ETH to spend (e.g. 0.01):")
+    await reply("Please enter the amount of ETH to spend (e.g. 0.01):")
     return BUY_AWAIT_AMOUNT
 
 async def buy_amount_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    reply = get_reply_func(update)
     user_id = update.effective_user.id
     if user_id not in user_buy_context:
-        await update.message.reply_text("Please start with /buy <address>.")
+        await reply("Please start with /buy <address>.")
         return ConversationHandler.END
     try:
         eth_amount = float(update.message.text.strip())
         if eth_amount <= 0:
             raise ValueError
     except Exception:
-        await update.message.reply_text("Please enter a valid positive ETH amount.")
+        await reply("Please enter a valid positive ETH amount.")
         return BUY_AWAIT_AMOUNT
     user_buy_context[user_id]['eth_amount'] = str(eth_amount)
     coin_address = user_buy_context[user_id]['coin_address']
@@ -143,7 +165,7 @@ async def buy_amount_handler(update: Update, context: ContextTypes.DEFAULT_TYPE)
         [InlineKeyboardButton("Cancel", callback_data='buy_cancel')]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
+    await reply(
         f"Are you sure you want to buy {eth_amount} ETH of {coin_address}?",
         reply_markup=reply_markup
     )
@@ -213,7 +235,10 @@ wallet_conversation_handler = ConversationHandler(
 )
 
 buy_conversation_handler = ConversationHandler(
-    entry_points=[CommandHandler('buy', buy_handler)],
+    entry_points=[
+        CommandHandler('buy', buy_handler),
+        CallbackQueryHandler(buy_handler, pattern=r"^buy_0x[a-fA-F0-9]{40}$")
+    ],
     states={
         BUY_AWAIT_AMOUNT: [MessageHandler(filters.TEXT & ~filters.COMMAND, buy_amount_handler)],
         BUY_AWAIT_CONFIRM: [CallbackQueryHandler(buy_confirm_handler)],

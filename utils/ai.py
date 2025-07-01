@@ -24,7 +24,7 @@ HEADERS = {
 }
 
 def ask_gpt(prompt: str) -> str:
-    url = "https://openrouter.ai/api/v1/chat/completions"
+    url = f"{OPENROUTER_API_BASE}/chat/completions"
     system_msg = {"role": "system", "content": "You are a crypto market analyst writing concise daily summaries."}
     user_msg = {"role": "user", "content": prompt}
 
@@ -32,7 +32,7 @@ def ask_gpt(prompt: str) -> str:
         payload = {
             "model": model,
             "messages": [system_msg, user_msg],
-            "max_tokens": 256,
+            "max_tokens": 2048,
             "temperature": 0.7
         }
         response = requests.post(url, headers=HEADERS, json=payload)

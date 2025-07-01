@@ -1,5 +1,5 @@
 # handlers/check.py
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes
 from utils.zora import get_coin_metrics
 
@@ -35,3 +35,12 @@ async def check_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     await update.message.reply_text(text, parse_mode="HTML")
+    ***REMOVED***
+    if address and address.startswith("0x") and len(address) == 42:
+        keyboard = [
+            [
+                InlineKeyboardButton("Analysis", callback_data=f"analysis_{address}")
+            ]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text("Choose an action:", reply_markup=reply_markup)

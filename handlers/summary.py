@@ -1,29 +1,37 @@
 # handlers/summary.py
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ContextTypes, CommandHandler
 from utils.zora import get_pulse_metrics
 from utils.ai import ask_gpt
 
 async def summary_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     args = context.args
+    ***REMOVED***
+    async def reply(text):
+        if update.message:
+            return await update.message.reply_text(text)
+        elif getattr(update, 'callback_query', None) and update.callback_query.message:
+            return await update.callback_query.message.reply_text(text)
+    ***REMOVED***
+    wait_message = await reply("🤖 AI is analyzing, please wait...")
     if not args or not args[0].isdigit():
-        return await update.message.reply_text(
-            "Usage: /summary <1-5> (e.g., /summary 2)"
-        )
+        if wait_message:
+            await wait_message.edit_text("Usage: /summary <1-5> (e.g., /summary 2)")
+        return
     index = int(args[0])
 
     # Fetch metrics
     metrics = get_pulse_metrics()
     if not metrics:
-        return await update.message.reply_text(
-            "❌ Failed to fetch Zora Pulse metrics. Cannot generate analysis."
-        )
+        if wait_message:
+            await wait_message.edit_text("❌ Failed to fetch Zora Pulse metrics. Cannot generate analysis.")
+        return
 
     # Validate index
     if index < 1 or index > len(metrics):
-        return await update.message.reply_text(
-            f"❌ Invalid number. Please choose a number between 1 and {len(metrics)}."
-        )
+        if wait_message:
+            await wait_message.edit_text(f"❌ Invalid number. Please choose a number between 1 and {len(metrics)}.")
+        return
 
     # Select the specific coin metrics
     m = metrics[index - 1]
@@ -46,6 +54,9 @@ async def summary_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         analysis = ask_gpt(prompt)
     except Exception as e:
-        return await update.message.reply_text(f"❌ AI analysis failed: {e}")
+        if wait_message:
+            await wait_message.edit_text(f"❌ AI analysis failed: {e}")
+        return
 
-    await update.message.reply_text(analysis.strip())
+    if wait_message:
+        await wait_message.edit_text(analysis.strip())
