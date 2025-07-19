@@ -67,6 +67,10 @@ ZoraPulseBot is a Telegram bot that fetches on-chain metrics for Zora coins and 
    ZORA_API_KEY=your_zora_api_key
    OPENROUTER_API_KEY=sk-org-...
    OPENROUTER_API_BASE=https://openrouter.ai/api/v1
+   FERNET_KEY=python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+   TWITTER_BEARER_TOKEN=YOUR TWITTER_BEARER_TOKEN
+   TWITTER_TOKEN=YOUR TWITTER_TOKEN
+   TWITTER_SECRET=YOUT TWITTER_SECRET
    ```
 
 ## Usage
