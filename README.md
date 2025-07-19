@@ -28,7 +28,16 @@ ZoraPulseBot is a Telegram bot that fetches on-chain metrics for Zora coins and 
   Show your wallet's ETH balance and Zora Coin holdings.
 - **/delete**  
   Delete your wallet (irreversible).
-
+- **/hot <contract_address>**  
+  Shows the number of tweets containing the token symbol (not cashtag) in the past week on X (Twitter) as a measure of hotness. Uses Twitter API v2 free tier, so only keyword search is supported (no $cashtag).  
+  
+  **Environment variables required:**
+  - `TWITTER_BEARER_TOKEN` or `TWITTER_TOKEN` (Bearer Token from Twitter/X developer portal)
+  - (Optional) `TWITTER_SECRET` (not used in free v2 search)
+  
+  **Notes:**
+  - The bot will reply with a rate limit message if the Twitter API quota is exceeded.
+  - Only public tweets in the last 5 days are counted (due to API limitations).
 ## Installation
 
 1. **Clone the repo**  

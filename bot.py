@@ -8,6 +8,7 @@ from handlers.check import check_handler
 from handlers.analysis import analysis_handler
 from handlers.wallet import creat_handler, import_handler, info_handler, wallet_conversation_handler, buy_conversation_handler
 from handlers.buttons import button_callback_handler
+from handlers.hot import hot_handler
 
 
 load_dotenv()
@@ -25,7 +26,8 @@ async def set_bot_commands(app):
         BotCommand("import", "Import an existing wallet"),
         BotCommand("info", "Show your wallet's ETH balance and Zora Coin holdings"),
         BotCommand("analysis", "In-depth AI analysis for a token"),
-        BotCommand("delete", "Delete your wallet")
+        BotCommand("delete", "Delete your wallet"),
+        BotCommand("hot", "Show tweet count for a token on X in the past week")
     ]
     await app.bot.set_my_commands(commands)
 
@@ -66,6 +68,7 @@ app.add_handler(CommandHandler("info", info_handler))
 app.add_handler(wallet_conversation_handler)
 app.add_handler(buy_conversation_handler)
 app.add_handler(CallbackQueryHandler(button_callback_handler, pattern=r"^(summary|buy|analysis)_.*$"))
+app.add_handler(CommandHandler("hot", hot_handler))
 app.add_handler(MessageHandler(filters.ALL, debug_handler))
 
 
